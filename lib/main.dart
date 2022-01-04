@@ -32,9 +32,12 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     const Duration _duration = Duration(seconds: 5);
     _timer = Timer.periodic(_duration, timerTick);
+    Future.delayed(Duration.zero, () async {
+      await timerTick(_timer);
+    });
   }
 
-  void timerTick(Timer timer) async {
+  Future<void> timerTick(Timer timer) async {
     var busses = await FetchFromApi();
     setState(() {
       _positions = busses;
@@ -49,6 +52,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_positions == null) {
+      return SafeArea(
+        child: Container(
+          color: Colors.red,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                CircularProgressIndicator(),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pardubice MHD"),
