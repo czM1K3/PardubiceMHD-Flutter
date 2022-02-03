@@ -80,6 +80,11 @@ class _HomePageState extends State<HomePage> {
               InteractiveFlag.pinchZoom |
               InteractiveFlag.drag |
               InteractiveFlag.doubleTapZoom,
+          maxZoom: 18,
+          minZoom: 11,
+          nePanBoundary: LatLng(50.1, 15.9),
+          swPanBoundary: LatLng(49.988, 15.7),
+          slideOnBoundaries: true,
         ),
         layers: [
           TileLayerOptions(
@@ -92,14 +97,12 @@ class _HomePageState extends State<HomePage> {
                         width: 80.0,
                         height: 80.0,
                         point: LatLng(p.latitude, p.longitude),
-                        builder: (ctx) => Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              ShowModal(context, p);
-                            },
-                            child: TrolleyIcon(
-                              name: p.lineName,
-                            ),
+                        builder: (ctx) => GestureDetector(
+                          onTap: () {
+                            ShowModal(context, p);
+                          },
+                          child: TrolleyIcon(
+                            name: p.lineName,
                           ),
                         ),
                       )) ??
