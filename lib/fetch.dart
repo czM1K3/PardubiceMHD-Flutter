@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 Future<List<BusPosition>?> FetchFromApi() async {
-  const url = kIsWeb ? "/api/buses" : "https://mhd.kacis.eu/api/buses";
+  const url = kIsWeb ? "/api/buses" : "https://mhd.madhome.xyz/api/buses";
   try {
     var response = await post(Uri.parse(url));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));

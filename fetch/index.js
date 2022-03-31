@@ -17,7 +17,10 @@ app.post("/api/buses", async (_req, res) => {
 	res.status(200).json(data);
 });
 
-app.use(express.static('public'))
+app.use(express.static('public',{
+	cacheControl: true,
+	maxAge: 60 * 60 * 24,
+}))
 
 app.listen(3000, () => {
 	console.log("Server is running on port 3000");
