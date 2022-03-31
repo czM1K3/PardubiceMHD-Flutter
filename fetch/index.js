@@ -8,7 +8,7 @@ app.use(cors({
 	origin: "*",
 }))
 
-app.get("/api/busses", async (_req, res) => {
+app.get("/api/buses", async (_req, res) => {
 	const raw = await fetch("https://mhd.kacis.eu/api/buses", {
 		method: "POST",
 		body: '{"key":"869f749a-1b72-4ccb-b888-cb0aef8e0aea"}',
