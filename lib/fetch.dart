@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 Future<List<BusPosition>?> FetchFromApi() async {
-  const url = "https://mhd.kacis.eu/api/buses";
+  const url = kIsWeb ? "/api/buses" : "https://mhd.kacis.eu/api/buses";
   try {
-    var response = await get(Uri.parse(url));
+    var response = await post(Uri.parse(url));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
     var positions = List<BusPosition>.from(
       decodedResponse["data"].map((item) {
