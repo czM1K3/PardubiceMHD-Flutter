@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pardumhd/fetch.dart';
 import 'package:pardumhd/icon.dart';
+import 'package:pardumhd/location.dart';
 import 'package:pardumhd/modal.dart';
 
 void main() {
@@ -25,11 +26,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Timer _timer;
+  late MapController _mapController;
   List<BusPosition>? _positions;
+  Position? _position;
 
   @override
   void initState() {
     super.initState();
+    _mapController = MapController();
     const Duration _duration = Duration(seconds: 5);
     _timer = Timer.periodic(_duration, timerTick);
     Future.delayed(Duration.zero, () async {
@@ -39,8 +43,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> timerTick(Timer timer) async {
     var busses = await FetchFromApi();
+    var position = await determinePosition();
     setState(() {
       _positions = busses;
+      _position = position;
     });
   }
 
@@ -73,6 +79,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.red,
       ),
       body: FlutterMap(
+        mapController: _mapController,
         options: MapOptions(
           center: LatLng(50.0317826, 15.7760577),
           zoom: 13.0,
@@ -107,10 +114,37 @@ class _HomePageState extends State<HomePage> {
                         ),
                       )) ??
                   []),
+              ...(_position != null
+                  ? [
+                      Marker(
+                        point: LatLng(
+                          _position!.latitude,
+                          _position!.longitude,
+                        ),
+                        builder: (ctx) => const Icon(
+                          Icons.location_pin,
+                          color: Colors.blue,
+                          size: 40,
+                        ),
+                      ),
+                    ]
+                  : []),
             ],
           ),
         ],
       ),
+      floatingActionButton: _position != null
+          ? FloatingActionButton(
+              onPressed: () {
+                _mapController.move(
+                  LatLng(_position!.latitude, _position!.longitude),
+                  15,
+                );
+              },
+              child: const Icon(Icons.my_location),
+              backgroundColor: Colors.red,
+            )
+          : null,
     );
   }
 }
