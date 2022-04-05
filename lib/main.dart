@@ -25,40 +25,89 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Timer _timer;
+  static const bool isInstant = false;
+  static const int fetchTime = 10, recalculateTime = 100;
+
+  late Timer _fetchTimer;
   late MapController _mapController;
-  List<BusPosition>? _positions;
+  List<BusPosition>? _oldPositions, _newPositions, _currentPosition;
   Position? _position;
+  late int _sinceLastFetch;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
-    const Duration _duration = Duration(seconds: 5);
-    _timer = Timer.periodic(_duration, timerTick);
+    _sinceLastFetch = 0;
+
+    _fetchTimer = Timer.periodic(
+      const Duration(seconds: fetchTime),
+      fetchTimerTick,
+    );
+    Timer.periodic(
+      const Duration(milliseconds: recalculateTime),
+      calculatePositionTimerTick,
+    );
     Future.delayed(Duration.zero, () async {
-      await timerTick(_timer);
+      await fetchTimerTick(_fetchTimer);
     });
   }
 
-  Future<void> timerTick(Timer timer) async {
-    var busses = await fetchFromApi();
-    var position = await determinePosition();
+  Future<void> fetchTimerTick(Timer timer) async {
+    final newBusses = await fetchFromApi();
+    final position = await determinePosition();
+    if (newBusses != null) {
+      _oldPositions = _newPositions;
+      _newPositions = newBusses;
+    }
+    _position = position;
+    _sinceLastFetch = 0;
+  }
+
+  Future<void> calculatePositionTimerTick(Timer timer) async {
+    _sinceLastFetch++;
+    if (isInstant || _oldPositions == null || _newPositions == null) {
+      setState(() {
+        _currentPosition = _newPositions;
+      });
+      return;
+    }
+    final percent = _sinceLastFetch * recalculateTime / 10000;
+    final currnetPositions = _oldPositions!.map((oldPos) {
+      final newPos = _newPositions!.firstWhere(
+        (newPos) => newPos.vid == oldPos.vid,
+        orElse: () => _newPositions![0],
+      );
+      final latChange = newPos.latitude - oldPos.latitude;
+      final lonChange = newPos.longitude - oldPos.longitude;
+      final lat = oldPos.latitude + (latChange * percent);
+      final lon = oldPos.longitude + (lonChange * percent);
+
+      return BusPosition(
+        destination: newPos.destination,
+        lineName: newPos.lineName,
+        latitude: lat,
+        longitude: lon,
+        next: newPos.next,
+        last: newPos.last,
+        time: newPos.time,
+        vid: newPos.vid,
+      );
+    }).toList();
     setState(() {
-      _positions = busses;
-      _position = position;
+      _currentPosition = currnetPositions;
     });
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _fetchTimer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_positions == null) {
+    if (_currentPosition == null) {
       return SafeArea(
         child: Container(
           color: Colors.red,
@@ -100,7 +149,7 @@ class _HomePageState extends State<HomePage> {
           ),
           MarkerLayerOptions(
             markers: [
-              ...(_positions?.map((p) => Marker(
+              ...(_currentPosition?.map((p) => Marker(
                         width: 80.0,
                         height: 80.0,
                         point: LatLng(p.latitude, p.longitude),
