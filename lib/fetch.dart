@@ -2,23 +2,16 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-Future<List<BusPosition>?> FetchFromApi() async {
-  const url = kIsWeb ? "/api/buses" : "https://mhd.madhome.xyz/api/buses";
+Future<List<BusPosition>?> fetchFromApi() async {
+  const url = kIsWeb && !kDebugMode
+      ? "/api/buses"
+      : "https://mhd.madhome.xyz/api/buses";
   try {
     var response = await post(Uri.parse(url));
     var decodedResponse = jsonDecode(utf8.decode(response.bodyBytes));
     var positions = List<BusPosition>.from(
       decodedResponse["data"].map((item) {
-        return BusPosition(
-          vid: item["vid"],
-          lineName: item["line_name"],
-          latitude: item["gps_latitude"],
-          longitude: item["gps_longitude"],
-          time: item["time_difference"],
-          last: item["last_stop_name"],
-          next: item["current_stop_name"],
-          destination: item["destination_name"],
-        );
+        return BusPosition.fromJson(item);
       }).toList(),
     );
     positions.sort(((a, b) => b.latitude.compareTo(a.latitude)));
@@ -55,4 +48,14 @@ class BusPosition {
   String? last;
   String? next;
   String? destination;
+
+  BusPosition.fromJson(Map<String, dynamic> json)
+      : vid = json['vid'],
+        lineName = json['line_name'],
+        latitude = json['gps_latitude'],
+        longitude = json['gps_longitude'],
+        time = json['time_difference'],
+        last = json['last_stop_name'],
+        next = json['current_stop_name'],
+        destination = json['destination_name'];
 }

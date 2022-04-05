@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> timerTick(Timer timer) async {
-    var busses = await FetchFromApi();
+    var busses = await fetchFromApi();
     var position = await determinePosition();
     setState(() {
       _positions = busses;
