@@ -67,35 +67,41 @@ class _HomePageState extends State<HomePage> {
   Future<void> calculatePositionTimerTick(Timer timer) async {
     _sinceLastFetch++;
     if (isInstant || _oldPositions == null || _newPositions == null) {
-      setState(() {
-        _currentPosition = _newPositions;
-      });
+      if (_currentPosition != _newPositions) {
+        setState(() {
+          _currentPosition = _newPositions;
+        });
+      }
       return;
     }
     final percent = _sinceLastFetch * recalculateTime / 10000;
-    final currnetPositions = _oldPositions!.map((oldPos) {
-      final newPos = _newPositions!.firstWhere(
+    final currentPositions = _oldPositions!.map((oldPos) {
+      final newPos = _newPositions!.where(
         (newPos) => newPos.vid == oldPos.vid,
-        orElse: () => _newPositions![0],
       );
-      final latChange = newPos.latitude - oldPos.latitude;
-      final lonChange = newPos.longitude - oldPos.longitude;
+      if (newPos.isEmpty) {
+        return null;
+      }
+      final latChange = newPos.first.latitude - oldPos.latitude;
+      final lonChange = newPos.first.longitude - oldPos.longitude;
       final lat = oldPos.latitude + (latChange * percent);
       final lon = oldPos.longitude + (lonChange * percent);
 
       return BusPosition(
-        destination: newPos.destination,
-        lineName: newPos.lineName,
+        destination: newPos.first.destination,
+        lineName: newPos.first.lineName,
         latitude: lat,
         longitude: lon,
-        next: newPos.next,
-        last: newPos.last,
-        time: newPos.time,
-        vid: newPos.vid,
+        next: newPos.first.next,
+        last: newPos.first.last,
+        time: newPos.first.time,
+        vid: newPos.first.vid,
       );
     }).toList();
+
     setState(() {
-      _currentPosition = currnetPositions;
+      _currentPosition = List<BusPosition>.from(
+          currentPositions.where((pos) => pos != null).toList());
     });
   }
 
