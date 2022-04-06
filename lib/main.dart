@@ -8,18 +8,25 @@ import 'package:pardumhd/fetch.dart';
 import 'package:pardumhd/icon.dart';
 import 'package:pardumhd/location.dart';
 import 'package:pardumhd/modal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+const String instantName = "instant";
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
   runApp(
-    const MaterialApp(
-      home: HomePage(),
+    MaterialApp(
+      home: HomePage(sharedPreferences: prefs),
       title: "Pardubice MHD",
     ),
   );
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final SharedPreferences sharedPreferences;
+
+  const HomePage({Key? key, required this.sharedPreferences}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -40,7 +47,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _mapController = MapController();
     _sinceLastFetch = 0;
-    _isInstant = false;
+    _isInstant = widget.sharedPreferences.getBool(instantName) ?? false;
 
     _fetchTimer = Timer.periodic(
       const Duration(seconds: fetchTime),
@@ -162,8 +169,10 @@ class _HomePageState extends State<HomePage> {
                             activeColor: Colors.red,
                             title: const Text("Instantní mód"),
                             value: _isInstant,
-                            onChanged: (value) {
+                            onChanged: (value) async {
                               if (value != null) {
+                                await widget.sharedPreferences
+                                    .setBool(instantName, value);
                                 setState(() {
                                   _isInstant = value;
                                 });
