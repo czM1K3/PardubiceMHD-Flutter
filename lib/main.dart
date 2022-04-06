@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const bool isInstant = false;
+  late bool _isInstant;
   static const int fetchTime = 10, recalculateTime = 100;
 
   late Timer _fetchTimer;
@@ -39,6 +39,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _mapController = MapController();
     _sinceLastFetch = 0;
+    _isInstant = false;
 
     _fetchTimer = Timer.periodic(
       const Duration(seconds: fetchTime),
@@ -66,7 +67,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> calculatePositionTimerTick(Timer timer) async {
     _sinceLastFetch++;
-    if (isInstant || _oldPositions == null || _newPositions == null) {
+    if (_isInstant || _oldPositions == null || _newPositions == null) {
       if (_currentPosition != _newPositions) {
         setState(() {
           _currentPosition = _newPositions;
@@ -105,6 +106,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void setInstant(bool value) {
+    setState(() {
+      _isInstant = value;
+    });
+  }
+
   @override
   void dispose() {
     _fetchTimer.cancel();
@@ -121,7 +128,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                CircularProgressIndicator(),
+                CircularProgressIndicator(color: Colors.white),
               ],
             ),
           ),
@@ -130,8 +137,60 @@ class _HomePageState extends State<HomePage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Pardubice MHD"),
+        title: Row(
+          children: const [
+            Image(image: AssetImage("assets/Pardubice_logo.png"), height: 70),
+            Text("Pardubice MHD"),
+          ],
+        ),
         backgroundColor: Colors.red,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => StatefulBuilder(
+                  builder: (context, setState) {
+                    return AlertDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text("Nastavení",
+                              style: TextStyle(fontSize: 20)),
+                          CheckboxListTile(
+                            activeColor: Colors.red,
+                            title: const Text("Instantní mód"),
+                            value: _isInstant,
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _isInstant = value;
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          child: const Text("Zavřít",
+                              style: TextStyle(color: Colors.white)),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
       ),
       body: FlutterMap(
         mapController: _mapController,
