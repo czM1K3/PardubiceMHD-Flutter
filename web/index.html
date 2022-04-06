@@ -31,8 +31,24 @@
 
   <title>pardumhd</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body { height: 100%; }
+ 
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    h1.loadingH1 {
+      color: white;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
-<body>
+<body style="background-color: red;">
+  <h1 class="loadingH1">Načítání souborů</h1>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
