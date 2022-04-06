@@ -1,11 +1,11 @@
 {
-    "name": "pardumhd",
-    "short_name": "pardumhd",
+    "name": "Pardubice MHD",
+    "short_name": "ParduMHD",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FF0000",
+    "theme_color": "#FF0000",
+    "description": "Mapa Pardubických MHD",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
