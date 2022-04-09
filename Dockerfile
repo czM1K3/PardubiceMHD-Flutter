@@ -3,7 +3,7 @@ FROM --platform=linux/amd64 cirrusci/flutter:2.10.3 AS builder
 WORKDIR /app
 COPY . .
 RUN flutter pub get
-RUN flutter build web
+RUN flutter build web --web-renderer html
 
 FROM node:16-alpine
 
