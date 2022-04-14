@@ -6,7 +6,7 @@ import compression from "compression";
 const getBusses = async (_req, res) => {
 	const raw = await fetch("https://mhd.kacis.eu/api/buses", {
 		method: "POST",
-		body: '{"key":"869f749a-1b72-4ccb-b888-cb0aef8e0aea"}',
+		body: '{"key":"09658f18-0f8c-4909-a571-0bc6b4acfbec"}',
 	});
 	const data = await raw.json();
 	res.status(200).json(data);
