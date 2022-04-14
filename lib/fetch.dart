@@ -14,7 +14,6 @@ Future<List<BusPosition>?> fetchFromApi() async {
         return BusPosition.fromJson(item);
       }).toList(),
     );
-    positions.sort(((a, b) => b.latitude.compareTo(a.latitude)));
     return positions.where((element) => element.lineName != "MAN").toList();
   } catch (e) {
     return null;

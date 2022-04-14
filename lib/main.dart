@@ -77,6 +77,7 @@ class _HomePageState extends State<HomePage> {
     _sinceLastFetch++;
     if (_isInstant || _oldPositions == null || _newPositions == null) {
       if (_currentPosition != _newPositions) {
+        _newPositions!.sort(((a, b) => b.latitude.compareTo(a.latitude)));
         setState(() {
           _currentPosition = _newPositions;
         });
@@ -84,33 +85,37 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     final percent = _sinceLastFetch * recalculateTime / 10000;
-    final currentPositions = _oldPositions!.map((oldPos) {
-      final newPos = _newPositions!.where(
-        (newPos) => newPos.vid == oldPos.vid,
-      );
-      if (newPos.isEmpty) {
-        return null;
-      }
-      final latChange = newPos.first.latitude - oldPos.latitude;
-      final lonChange = newPos.first.longitude - oldPos.longitude;
-      final lat = oldPos.latitude + (latChange * percent);
-      final lon = oldPos.longitude + (lonChange * percent);
+    final currentPositions = _oldPositions!
+        .map((oldPos) {
+          final newPos = _newPositions!.where(
+            (newPos) => newPos.vid == oldPos.vid,
+          );
+          if (newPos.isEmpty) {
+            return null;
+          }
+          final latChange = newPos.first.latitude - oldPos.latitude;
+          final lonChange = newPos.first.longitude - oldPos.longitude;
+          final lat = oldPos.latitude + (latChange * percent);
+          final lon = oldPos.longitude + (lonChange * percent);
 
-      return BusPosition(
-        destination: newPos.first.destination,
-        lineName: newPos.first.lineName,
-        latitude: lat,
-        longitude: lon,
-        next: newPos.first.next,
-        last: newPos.first.last,
-        time: newPos.first.time,
-        vid: newPos.first.vid,
-      );
-    }).toList();
+          return BusPosition(
+            destination: newPos.first.destination,
+            lineName: newPos.first.lineName,
+            latitude: lat,
+            longitude: lon,
+            next: newPos.first.next,
+            last: newPos.first.last,
+            time: newPos.first.time,
+            vid: newPos.first.vid,
+          );
+        })
+        .where((element) => element != null)
+        .toList();
+
+    currentPositions.sort(((a, b) => b!.latitude.compareTo(a!.latitude)));
 
     setState(() {
-      _currentPosition = List<BusPosition>.from(
-          currentPositions.where((pos) => pos != null).toList());
+      _currentPosition = List<BusPosition>.from(currentPositions);
     });
   }
 
