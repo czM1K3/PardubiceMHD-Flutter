@@ -65,7 +65,8 @@ class _HomePageState extends State<HomePage> {
       positionTimerTick(_positionTimer);
       updateBuses(await fetchFromApi());
     });
-    Socket socket = io(getUrl());
+    Socket socket =
+        io(getUrl(), OptionBuilder().setTransports(['websocket']).build());
     socket.on('buses', (data) {
       updateBuses(Response.fromJson(data).data);
     });
