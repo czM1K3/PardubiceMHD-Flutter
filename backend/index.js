@@ -9,7 +9,11 @@ const busesName = "buses";
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketServer(server);
+const io = new SocketServer(server, {
+	cors: {
+		origin: "*",
+	},
+});
 let cache = null;
 
 const getBusses = async () => {

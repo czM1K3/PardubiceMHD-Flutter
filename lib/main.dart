@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:pardumhd/fetch/fetch.dart';
-import 'package:pardumhd/icon.dart';
-import 'package:pardumhd/location.dart';
-import 'package:pardumhd/modal.dart';
+import 'package:pardumhd/functions/fetch.dart';
+import 'package:pardumhd/models/response.dart';
+import 'package:pardumhd/widgets/icon.dart';
+import 'package:pardumhd/functions/location.dart';
+import 'package:pardumhd/functions/modal.dart';
 import 'package:pardumhd/models/busPosition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 const String instantName = "instant";
 
@@ -35,9 +37,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late bool _isInstant;
-  static const int fetchTime = 10, recalculateTime = 100;
+  static const int positionTime = 9, recalculateTime = 100;
 
-  late Timer _fetchTimer;
+  late Timer _positionTimer;
   late MapController _mapController;
   List<BusPosition>? _oldPositions, _newPositions, _currentPosition;
   Position? _position;
@@ -50,27 +52,44 @@ class _HomePageState extends State<HomePage> {
     _sinceLastFetch = 0;
     _isInstant = widget.sharedPreferences.getBool(instantName) ?? false;
 
-    _fetchTimer = Timer.periodic(
-      const Duration(seconds: fetchTime),
-      fetchTimerTick,
+    _positionTimer = Timer.periodic(
+      const Duration(seconds: positionTime),
+      positionTimerTick,
     );
     Timer.periodic(
       const Duration(milliseconds: recalculateTime),
       calculatePositionTimerTick,
     );
     Future.delayed(Duration.zero, () async {
-      await fetchTimerTick(_fetchTimer);
+      positionTimerTick(_positionTimer);
+      updateBuses(await fetchFromApi());
+    });
+    Socket socket = io('http://localhost:3000');
+    socket.on('buses', (data) {
+      var fetchedData = Response.fromJson(data);
+      updateBuses(fetchedData.data);
     });
   }
 
-  Future<void> fetchTimerTick(Timer timer) async {
-    final newBusses = await fetchFromApi();
+  Future<void> positionTimerTick(Timer timer) async {
+    // final newBusses = await fetchFromApi();
     final position = await determinePosition();
-    if (newBusses != null) {
-      _oldPositions = _newPositions;
-      _newPositions = newBusses;
+    // if (newBusses != null) {
+    //   _oldPositions = _newPositions;
+    //   _newPositions = newBusses;
+    // }
+    setState(() {
+      _position = position;
+    });
+    // _sinceLastFetch = 0;
+  }
+
+  void updateBuses(List<BusPosition>? newBusses) {
+    if (newBusses == null) {
+      return;
     }
-    _position = position;
+    _oldPositions = _newPositions;
+    _newPositions = newBusses;
     _sinceLastFetch = 0;
   }
 
@@ -128,7 +147,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _fetchTimer.cancel();
+    _positionTimer.cancel();
     super.dispose();
   }
 
