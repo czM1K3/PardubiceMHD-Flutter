@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
     if (newBusses == null) {
       return;
     }
-    _oldPositions = _newPositions;
+    _oldPositions = _currentPosition;
     _newPositions = newBusses;
     _sinceLastFetch = 0;
   }
