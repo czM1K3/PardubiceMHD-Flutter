@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 String getUrl() {
-  return kIsWeb && !kDebugMode ? "/" : "https://mhd.madhome.xyz/";
+  return "http://138.68.87.242/";
 }
