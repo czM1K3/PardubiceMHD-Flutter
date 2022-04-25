@@ -49,6 +49,10 @@ app.use(compression());
 app.post("/api/buses", busFetch);
 app.get("/api/buses", busFetch);
 
+app.get("/api/count", (_req, res) => {
+	res.status(200).json({ count: io.engine.clientsCount });
+});
+
 app.use(
 	express.static("public", {
 		cacheControl: true,
@@ -64,7 +68,7 @@ setInterval(async () => {
 			io.emit(busesName, buses);
 		}
 	}
-}, 1000);
+}, 900);
 
 io.on("connection", (socket) => {
 	socket.join(busesName);
