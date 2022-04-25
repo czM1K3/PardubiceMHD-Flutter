@@ -4,6 +4,7 @@ WORKDIR /app
 COPY . .
 RUN flutter pub get
 RUN flutter build web --web-renderer html
+RUN flutter build apk
 
 FROM node:16-alpine
 
@@ -14,5 +15,6 @@ COPY backend/yarn.lock .
 RUN yarn install --production
 RUN yarn cache clean
 COPY backend/index.js .
+COPY --from=builder /app/build/app/outputs/apk/release/app-release.apk /app/public/app.apk
 
 CMD ["node", "index.js"]

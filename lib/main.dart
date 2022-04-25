@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:pardumhd/functions/fetch.dart';
 import 'package:pardumhd/functions/getUrl.dart';
 import 'package:pardumhd/models/response.dart';
+import 'package:pardumhd/widgets/downloadButton.dart';
 import 'package:pardumhd/widgets/icon.dart';
 import 'package:pardumhd/functions/location.dart';
 import 'package:pardumhd/functions/modal.dart';
@@ -173,6 +175,7 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.red,
         actions: [
+          kIsWeb ? const DownloadAppButton() : Container(),
           IconButton(
             onPressed: () {
               showDialog(
