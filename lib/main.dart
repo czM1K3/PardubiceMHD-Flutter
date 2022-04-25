@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:pardumhd/fetch.dart';
+import 'package:pardumhd/fetch/fetch.dart';
 import 'package:pardumhd/icon.dart';
 import 'package:pardumhd/location.dart';
 import 'package:pardumhd/modal.dart';
+import 'package:pardumhd/models/busPosition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String instantName = "instant";
