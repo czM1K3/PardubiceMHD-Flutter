@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 cirrusci/flutter:2.10.3 AS builder
+FROM --platform=linux/amd64 cirrusci/flutter:2.10.4 AS builder
 
 WORKDIR /app
 COPY . .

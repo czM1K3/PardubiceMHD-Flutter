@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pardumhd/functions/fetch.dart';
+import 'package:pardumhd/functions/getUrl.dart';
 import 'package:pardumhd/models/response.dart';
 import 'package:pardumhd/widgets/icon.dart';
 import 'package:pardumhd/functions/location.dart';
@@ -64,24 +65,17 @@ class _HomePageState extends State<HomePage> {
       positionTimerTick(_positionTimer);
       updateBuses(await fetchFromApi());
     });
-    Socket socket = io('http://localhost:3000');
+    Socket socket = io(getUrl());
     socket.on('buses', (data) {
-      var fetchedData = Response.fromJson(data);
-      updateBuses(fetchedData.data);
+      updateBuses(Response.fromJson(data).data);
     });
   }
 
   Future<void> positionTimerTick(Timer timer) async {
-    // final newBusses = await fetchFromApi();
     final position = await determinePosition();
-    // if (newBusses != null) {
-    //   _oldPositions = _newPositions;
-    //   _newPositions = newBusses;
-    // }
     setState(() {
       _position = position;
     });
-    // _sinceLastFetch = 0;
   }
 
   void updateBuses(List<BusPosition>? newBusses) {
