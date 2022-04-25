@@ -9,10 +9,10 @@ FROM node:16-alpine
 
 WORKDIR /app
 COPY --from=builder /app/build/web/ /app/public/
-COPY fetch/package.json .
-COPY fetch/yarn.lock .
+COPY backend/package.json .
+COPY backend/yarn.lock .
 RUN yarn install --production
 RUN yarn cache clean
-COPY fetch/index.js .
+COPY backend/index.js .
 
 CMD ["node", "index.js"]
