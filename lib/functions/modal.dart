@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pardumhd/models/busPosition.dart';
+import 'package:pardumhd/models/bus_position.dart';
 
 void ShowModal(BuildContext context, BusPosition busPosition) {
   var isLate = busPosition.time == null ? null : busPosition.time?[0] == "-";

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pardumhd/functions/getUrl.dart';
+import 'package:pardumhd/functions/get_url.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DownloadAppButton extends StatelessWidget {

@@ -6,13 +6,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pardumhd/functions/fetch.dart';
-import 'package:pardumhd/functions/getUrl.dart';
+import 'package:pardumhd/functions/get_url.dart';
 import 'package:pardumhd/models/response.dart';
-import 'package:pardumhd/widgets/downloadButton.dart';
+import 'package:pardumhd/widgets/download_button.dart';
 import 'package:pardumhd/widgets/icon.dart';
 import 'package:pardumhd/functions/location.dart';
 import 'package:pardumhd/functions/modal.dart';
-import 'package:pardumhd/models/busPosition.dart';
+import 'package:pardumhd/models/bus_position.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -40,7 +40,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late bool _isInstant;
-  static const int positionTime = 9, recalculateTime = 100;
+  static const int positionTime = 11, recalculateTime = 100;
 
   late Timer _positionTimer;
   late MapController _mapController;

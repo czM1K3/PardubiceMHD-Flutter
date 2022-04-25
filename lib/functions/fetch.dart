@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:pardumhd/functions/getUrl.dart';
-import 'package:pardumhd/models/busPosition.dart';
+import 'package:pardumhd/functions/get_url.dart';
+import 'package:pardumhd/models/bus_position.dart';
 import 'package:pardumhd/models/response.dart' as response_model;
 
 Future<List<BusPosition>?> fetchFromApi() async {

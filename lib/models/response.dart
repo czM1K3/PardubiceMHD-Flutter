@@ -1,4 +1,4 @@
-import 'package:pardumhd/models/busPosition.dart';
+import 'package:pardumhd/models/bus_position.dart';
 
 class Response {
   Response({required this.success, required this.data});
