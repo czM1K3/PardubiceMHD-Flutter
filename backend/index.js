@@ -1,5 +1,5 @@
 import express from "express";
-import fetch from "node-fetch";
+import got from "got";
 import cors from "cors";
 import compression from "compression";
 import http from "http";
@@ -18,9 +18,11 @@ let cache = null;
 
 const getBusses = async () => {
 	try {
-		const raw = await fetch("https://mhdapi.delta-skola.dev/buses/");
-		return await raw.json();
-	} catch {
+		const raw = await got.post("https://mhd.kacis.eu/api/buses", {
+			body: '{"key":"09658f18-0f8c-4909-a571-0bc6b4acfbec"}',
+		}).json()
+		return raw;
+	} catch (e) {
 		return null;
 	}
 };
