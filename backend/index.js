@@ -1,5 +1,5 @@
 import express from "express";
-import got from "got";
+import fetch from "node-fetch";
 import cors from "cors";
 import compression from "compression";
 import http from "http";
@@ -18,11 +18,10 @@ let cache = null;
 
 const getBusses = async () => {
 	try {
-		const raw = await got.post("https://mhd.kacis.eu/api/buses", {
-			body: '{"key":"09658f18-0f8c-4909-a571-0bc6b4acfbec"}',
-		}).json()
-		return raw;
+		const raw = await fetch(process.env.FETCH_URL);
+		return await raw.json();
 	} catch (e) {
+		console.log(e);
 		return null;
 	}
 };
