@@ -1,3 +1,3 @@
 String getUrl() {
-  return "https://mhd.madhome.xyz/";
+  return "https://mhd.madsoft.cz/";
 }
